@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bintang Untukmu — The Green Nebula</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="page-transition" class="fade-in"></div>
+    <a href="surat.html" class="back-nav" data-nav>← Transmisi</a>
+
+    <div id="music-player">
+      <button id="music-btn">♪</button>
+      <div class="music-info"><span>Finale</span></div>
+    </div>
+
+    <div class="bintang-hero reveal">
+      <div
+        class="organic-nebula n-moss"
+        style="animation: spin 30s linear infinite"
+      ></div>
+      <h1
+        style="
+          font-family: var(--f-display);
+          font-size: clamp(3rem, 8vw, 5rem);
+          color: var(--cream);
+          font-style: italic;
+          z-index: 2;
+        "
+      >
+        Bintang<br /><em style="color: var(--gold)">Untukmu</em>
+      </h1>
+    </div>
+
+    <!-- UPGRADED FOG REVEAL -->
+    <div class="fog-container reveal">
+      <div class="fog-content">
+        <div class="fog-overlay"></div>
+        <h2 class="fog-reveal-text">I Love You</h2>
+      </div>
+      <canvas id="fog-canvas" class="fog-canvas"></canvas>
+    </div>
+
+    <div class="wish-sender reveal">
+      <p
+        style="
+          font-family: var(--f-mono);
+          color: var(--mist);
+          margin-bottom: 2rem;
+          font-size: 0.8rem;
+        "
+      >
+        KIRIM HARAPANMU KE LUAR ANGKASA
+      </p>
+      <input
+        type="text"
+        id="wish-input"
+        class="wish-input"
+        placeholder="Tulis harapanmu di sini..."
+      />
+      <button class="btn-fierce" id="send-wish">KIRIM 🚀</button>
+    </div>
+
+    <div class="blackhole-section reveal">
+      <p
+        style="
+          font-family: var(--f-mono);
+          color: var(--gold);
+          margin-bottom: 3rem;
+          text-align: center;
+        "
+      >
+        [ TOUCH THE BLACK HOLE ]
+      </p>
+      <div class="blackhole" id="blackhole"></div>
+    </div>
+
+    <div class="bh-overlay" id="bh-overlay">
+      <h1 class="final-msg">
+        "Daya tarikmu lebih kuat dari gravitasi mana pun."<br /><span
+          style="
+            font-size: 1rem;
+            font-family: var(--f-mono);
+            color: var(--mist);
+            margin-top: 2rem;
+            display: block;
+            letter-spacing: 5px;
+          "
+          >HAPPY MENSIVE, LOVE.</span
+        >
+      </h1>
+      <a href="index.html" class="btn-fierce restart-btn" data-nav
+        >RESTART UNIVERSE</a
+      >
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

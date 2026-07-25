@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Green Nebula</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="page-transition" class="fade-in"></div>
+
+    <div class="organic-nebula n-fern"></div>
+    <div class="organic-nebula n-moss"></div>
+
+    <div id="music-player">
+      <button id="music-btn">♪</button>
+      <div class="music-info"><span>Cosmic Intro</span></div>
+    </div>
+
+    <div class="void-container">
+      <div class="boot-sequence">
+        <div class="terminal-text" id="terminal-text"></div>
+        <h1 class="hero-title" id="hero-title">
+          Happy Monthversarry!<br /><em>Enter Our Universe</em>
+        </h1>
+        <p
+          style="
+            font-family: var(--f-mono);
+            font-size: 0.7rem;
+            color: var(--mist);
+            margin-top: 4rem;
+            letter-spacing: 3px;
+            animation: pulse 3s infinite;
+          "
+        >
+          SCROLL DOWN
+        </p>
+      </div>
+
+      <div class="star-connect-section">
+        <p class="star-hint" id="canvas-hint">
+          Draw a line through all 5 stars to sync
+        </p>
+        <div class="canvas-wrapper reveal">
+          <canvas id="connect-canvas"></canvas>
+          <div class="hidden-message" id="hidden-msg">We Made It This Far!</div>
+        </div>
+      </div>
+
+      <div class="about-universe reveal">
+        <div
+          class="organic-nebula n-moss"
+          style="top: 20%; right: 20%; width: 40vw; height: 40vh"
+        ></div>
+        <p>
+          Ada ruang di alam semesta ini yang gak bisa dilihat lewat teleskop apa
+          pun. Ruang yang tumbuh pelan-pelan, penuh cinta, dan hangat.
+        </p>
+        <p class="highlight">
+          Ini bukan sekadar ruang angkasa.<br />Ini semesta yang kita bangun
+          berdua.
+        </p>
+        <p>
+          Ayo jelajahi orbit semesta kita! Mulai dari yang paling dekat dengan
+          matahari ya.
+        </p>
+      </div>
+
+      <div class="orbit-nav-section" id="orbit-nav">
+        <div class="orbit-center"></div>
+        <a href="him.html" class="orbit-ring r-1" data-nav
+          ><span>Planet Dia</span></a
+        >
+        <a href="kita.html" class="orbit-ring r-2" data-nav
+          ><span>Galaksi Kita</span></a
+        >
+        <a href="surat.html" class="orbit-ring r-3" data-nav
+          ><span>Transmisi</span></a
+        >
+        <a href="untuk.html" class="orbit-ring r-4" data-nav
+          ><span>Bintangmu</span></a
+        >
+      </div>
+
+      <div class="teaser-section">
+        <div class="shooting-star" id="shooting-star"></div>
+        <p class="teaser-quote" id="teaser-quote">
+          "Dari miliaran kemungkinan,<br />gravitasi memilih kita untuk
+          bertemu."
+        </p>
+      </div>
+
+      <!-- NEW: NEXT BUTTON -->
+      <div class="next-page-nav reveal">
+        <p>PROCEED TO NEXT COORDINATE</p>
+        <a href="him.html" class="btn-fierce" data-nav
+          >Selanjutnya: Planet Dia ➔</a
+        >
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

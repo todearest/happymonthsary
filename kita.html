@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaksi Kita — The Green Nebula</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="page-transition" class="fade-in"></div>
+  <a href="him.html" class="back-nav" data-nav>← Planet Dia</a>
+  
+  <div id="music-player">
+    <button id="music-btn">♪</button>
+    <div class="music-info"><span>Galaxy</span></div>
+  </div>
+
+  <div class="kita-wrapper">
+    <div class="galaxy-hero">
+      <div class="spiral-bg"></div>
+      <h1 class="reveal">Galaksi Kita</h1>
+      <p style="font-family: var(--f-mono); color: var(--mist); letter-spacing: 2px;" class="reveal">KUMPULAN TITIK KOORDINAT</p>
+    </div>
+
+    <div class="map-window reveal">
+      <div class="map-canvas">
+        <div class="cluster c1" data-img="asset/7.jpg" data-txt="Koordinat 01: US is my comfort zone"></div>
+        <div class="cluster c2" data-img="asset/8.jpg" data-txt="Koordinat 02: I wanna keep holding you"></div>
+        <div class="cluster c3" data-img="asset/9.jpg" data-txt="Koordinat 03: Never been happier"></div>
+        <div class="cluster c4" data-img="asset/10.jpg" data-txt="Koordinat 04: My happiest place is you"></div>
+      </div>
+      <p style="position: absolute; bottom: 10px; left:0; right:0; text-align:center; font-family: var(--f-mono); font-size:10px; color: var(--gold-light); pointer-events: none;">[ DRAG MAP TO EXPLORE ]</p>
+    </div>
+
+    <div class="timeline-section reveal">
+      <div class="timeline-line"></div>
+      <div class="time-node">
+        <div class="node-hold"><div class="node-fill"></div></div>
+        <div class="time-content">
+          <h3 style="font-family: var(--f-mono); color: var(--gold); margin-bottom: 5px;">Im so grateful to meet you</h3>
+          <p style="font-family: var(--f-body); color: var(--cream);">Thank you for choosing me, and be with me always.</p>
+        </div>
+      </div>
+      <div class="time-node">
+        <div class="node-hold"><div class="node-fill"></div></div>
+        <div class="time-content">
+          <h3 style="font-family: var(--f-mono); color: var(--gold); margin-bottom: 5px;">Stay Wtth Me</h3>
+          <p style="font-family: var(--f-body); color: var(--cream);">We've made it this far, i want it to be more than forever.</p>
+        </div>
+      </div>
+      <p style="font-family: var(--f-mono); font-size: 10px; color: var(--mist); text-align: center; margin-top: -2rem;">[ HOLD CIRCLE TO UNLOCK DATA ]</p>
+    </div>
+
+    <div class="decoder-section reveal">
+      <p style="font-family: var(--f-mono); color: var(--mist); margin-bottom: 1rem;">SIGNAL INTERCEPTED</p>
+      <div class="decoder-text" id="decoder-text" data-target="AKU BERSYUKUR BISA SAMA KAMU">X*&#@$ ^!*(&# @^#$ !*& #@!$</div>
+      <button class="btn-fierce" id="decode-btn">DECODE SIGNAL</button>
+    </div>
+
+    <div class="gyro-wall reveal">
+      <div class="gyro-item"><img src="asset/7.jpg" alt="Us"><p style="text-align:center; font-family:var(--f-hand); color:#222; margin-top:10px;">Us</p></div>
+      <div class="gyro-item"><img src="asset/8.jpg" alt="Us"><p style="text-align:center; font-family:var(--f-hand); color:#222; margin-top:10px;">Together</p></div>
+      <div class="gyro-item"><img src="asset/9.jpg" alt="Us"><p style="text-align:center; font-family:var(--f-hand); color:#222; margin-top:10px;">Forevermore</p></div>
+    </div>
+
+    <!-- NEW: NEXT BUTTON -->
+    <div class="next-page-nav reveal">
+      <p>PROCEED TO NEXT COORDINATE</p>
+      <a href="surat.html" class="btn-fierce" data-nav>Selanjutnya: Transmisi ➔</a>
+    </div>
+
+  </div>
+
+  <div class="planet-modal" id="planet-modal"><div class="pm-content"><img src="" id="m-img" alt="Memory"><p id="m-txt"></p><button class="pm-close" id="pm-close" onclick="document.getElementById('planet-modal').classList.remove('show')">TUTUP</button></div></div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
