@@ -15,79 +15,88 @@
       <div class="music-info"><span>Signal</span></div>
     </div>
 
-    <div class="radar-hero reveal">
-      <div class="radar-ring rr-1"></div>
-      <div class="radar-ring rr-2"></div>
-      <div class="radar-ring rr-3"></div>
-      <h1
-        style="
-          font-family: var(--f-mono);
-          color: var(--nebula);
-          letter-spacing: 5px;
-          z-index: 2;
-        "
-      >
-        SINYAL DITERIMA
-      </h1>
-      <p
-        style="
-          font-family: var(--f-body);
-          color: var(--mist);
-          font-style: italic;
-          margin-top: 10px;
-        "
-      >
-        Cari sinyalbar untuk memproses.
-      </p>
-    </div>
+    <main id="app-core">
+      <div class="void-container">
+        <div class="radar-hero reveal">
+          <div class="radar-ring rr-1"></div>
+          <div class="radar-ring rr-2"></div>
+          <div class="radar-ring rr-3"></div>
+          <h1
+            style="
+              font-family: var(--f-mono);
+              color: var(--nebula);
+              letter-spacing: 5px;
+              z-index: 2;
+            "
+          >
+            SINYAL DITERIMA
+          </h1>
+          <p
+            style="
+              font-family: var(--f-body);
+              color: var(--mist);
+              font-style: italic;
+              margin-top: 10px;
+            "
+          >
+            Cari sinyalbar untuk memproses.
+          </p>
+        </div>
 
-    <div class="signal-unlock reveal">
-      <p
-        style="font-family: var(--f-mono); font-size: 10px; color: var(--mist)"
-      >
-        TAP BARS TO BOOST SIGNAL
-      </p>
-      <div class="bars-container">
-        <div class="s-bar b1"></div>
-        <div class="s-bar b2"></div>
-        <div class="s-bar b3"></div>
+        <div class="signal-unlock reveal">
+          <p
+            style="
+              font-family: var(--f-mono);
+              font-size: 10px;
+              color: var(--mist);
+            "
+          >
+            TAP BARS TO BOOST SIGNAL
+          </p>
+          <div class="bars-container">
+            <div class="s-bar b1"></div>
+            <div class="s-bar b2"></div>
+            <div class="s-bar b3"></div>
+          </div>
+        </div>
+
+        <div class="transmission-letter" id="transmission-letter">
+          <div class="t-text" id="t-text"></div>
+          <img src="asset/10.jpg" alt="Us" class="woven-photo" id="w-img-1" />
+
+          <div
+            style="
+              display: flex;
+              gap: 15px;
+              justify-content: center;
+              margin-top: 3rem;
+              opacity: 0;
+              transition: opacity 1s;
+            "
+            id="response-btns"
+          >
+            <button class="pm-close" id="btn-baca-lagi">BACA LAGI</button>
+          </div>
+        </div>
+
+        <div class="morse-section reveal">
+          <p class="morse-code" id="morse-text">
+            .. .-.. --- ...- . -.-- --- ..-
+          </p>
+          <button class="btn-fierce" id="morse-btn" style="font-size: 10px">
+            DECODE
+          </button>
+        </div>
+
+        <!-- NEW: NEXT BUTTON -->
+        <div class="next-page-nav reveal">
+          <p>PROCEED TO FINAL COORDINATE</p>
+          <a href="untuk.html" class="btn-fierce" data-nav
+            >Selanjutnya: Bintang Untukmu ➔</a
+          >
+        </div>
       </div>
-    </div>
-
-    <div class="transmission-letter" id="transmission-letter">
-      <div class="t-text" id="t-text"></div>
-      <img src="asset/10.jpg" alt="Us" class="woven-photo" id="w-img-1" />
-
-      <div
-        style="
-          display: flex;
-          gap: 15px;
-          justify-content: center;
-          margin-top: 3rem;
-          opacity: 0;
-          transition: opacity 1s;
-        "
-        id="response-btns"
-      >
-        <button class="pm-close" id="btn-baca-lagi">BACA LAGI</button>
-      </div>
-    </div>
-
-    <div class="morse-section reveal">
-      <p class="morse-code" id="morse-text">.. .-.. --- ...- . -.-- --- ..-</p>
-      <button class="btn-fierce" id="morse-btn" style="font-size: 10px">
-        DECODE
-      </button>
-    </div>
-
-    <!-- NEW: NEXT BUTTON -->
-    <div class="next-page-nav reveal">
-      <p>PROCEED TO FINAL COORDINATE</p>
-      <a href="untuk.html" class="btn-fierce" data-nav
-        >Selanjutnya: Bintang Untukmu ➔</a
-      >
-    </div>
-
+    </main>
     <script src="script.js"></script>
   </body>
 </html>
