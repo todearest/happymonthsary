@@ -4,6 +4,10 @@ let audio = new Audio("asset/music.mp3");
 audio.loop = true;
 let isPlaying = false;
 
+// ── FIX 1: GLOBAL ABORT CONTROLLER ──
+// This will sweep away old event listeners every time the page changes
+let pageController = new AbortController(); 
+
 // ── AUTOPLAY ENGINE (First Touch Interceptor) ──
 const initAudio = () => {
   if (sessionStorage.getItem(MUSIC_KEY) !== "false" && !isPlaying) {
@@ -15,33 +19,25 @@ const initAudio = () => {
       })
       .catch((e) => console.log("Autoplay blocked by browser policy:", e));
   }
-  // Detach listeners immediately after the first successful catch
   document.removeEventListener("click", initAudio);
   document.removeEventListener("touchstart", initAudio);
 };
 
-// Bind directly to document body to catch the user's very first swipe/tap anywhere
 document.addEventListener("click", initAudio, { once: true });
-document.addEventListener("touchstart", initAudio, {
-  once: true,
-  passive: true,
-});
+document.addEventListener("touchstart", initAudio, { once: true, passive: true });
 
+function playMusic() {
+  audio
+    .play()
+    .then(() => {
+      isPlaying = true;
+      sessionStorage.setItem(MUSIC_KEY, "true");
+    })
+    .catch(() => console.log("Autoplay blocked by browser."));
+}
+
+// ── GLOBAL INITIALIZATION ──
 document.addEventListener("DOMContentLoaded", () => {
-  const setupAutoplay = () => {
-    if (sessionStorage.getItem(MUSIC_KEY) !== "false" && !isPlaying) {
-      playMusic();
-    }
-    ["touchstart", "click", "keydown", "scroll"].forEach((evt) =>
-      window.removeEventListener(evt, setupAutoplay),
-    );
-  };
-
-  // Bind one-time listeners for autoplay
-  ["touchstart", "click", "keydown", "scroll"].forEach((evt) =>
-    window.addEventListener(evt, setupAutoplay, { once: true, passive: true }),
-  );
-
   // Restore state if already playing
   if (sessionStorage.getItem(MUSIC_KEY) === "true") {
     audio.currentTime = parseFloat(sessionStorage.getItem(MUSIC_TIME) || "0");
@@ -60,6 +56,33 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Init Pages
+  runPageScripts();
+});
+
+window.addEventListener("beforeunload", () => {
+  sessionStorage.setItem(MUSIC_TIME, audio.currentTime);
+});
+
+// Music Button Logic
+document.getElementById("music-btn")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (isPlaying) {
+    audio.pause();
+    isPlaying = false;
+    sessionStorage.setItem(MUSIC_KEY, "false");
+  } else {
+    audio
+      .play()
+      .then(() => {
+        isPlaying = true;
+        sessionStorage.setItem(MUSIC_KEY, "true");
+      })
+      .catch(() => {});
+  }
+});
+
+// ── PAGE SCRIPT ROUTER ──
+function runPageScripts() {
   if (document.getElementById("connect-canvas")) initVoidPage();
   if (document.querySelector(".solar-system-area")) initPlanetDia();
   if (document.querySelector(".map-window")) initGalaksiKita();
@@ -77,50 +100,56 @@ document.addEventListener("DOMContentLoaded", () => {
     { threshold: 0.15 },
   );
   reveals.forEach((r) => obs.observe(r));
-});
-
-window.addEventListener("beforeunload", () => {
-  sessionStorage.setItem(MUSIC_TIME, audio.currentTime);
-});
-
-function playMusic() {
-  audio
-    .play()
-    .then(() => {
-      isPlaying = true;
-      sessionStorage.setItem(MUSIC_KEY, "true");
-    })
-    .catch(() => console.log("Autoplay blocked by browser."));
 }
 
-document.getElementById("music-btn")?.addEventListener("click", (e) => {
-  e.stopPropagation();
 
-  if (isPlaying) {
-    audio.pause();
-    isPlaying = false;
-    sessionStorage.setItem(MUSIC_KEY, "false");
-  } else {
-    audio
-      .play()
-      .then(() => {
-        isPlaying = true;
-        sessionStorage.setItem(MUSIC_KEY, "true");
-      })
-      .catch(() => {});
+// ── SEAMLESS SPA ROUTER ──
+document.addEventListener("click", async (e) => {
+  const link = e.target.closest("a[data-nav]");
+  if (!link) return;
+  e.preventDefault();
+
+  const targetUrl = link.href;
+  const overlay = document.getElementById("page-transition");
+  overlay.classList.add("fade-in");
+
+  try {
+    const response = await fetch(targetUrl);
+    const html = await response.text();
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // ── FIX 3: SPA FAILSAFE ──
+    const nextAppCore = doc.getElementById("app-core");
+    if (!nextAppCore) throw new Error("Missing #app-core on target page");
+    const newContent = nextAppCore.innerHTML;
+
+    // ── FIX 1: ABORT OLD LISTENERS ──
+    pageController.abort(); 
+    pageController = new AbortController();
+
+    setTimeout(() => {
+      document.getElementById("app-core").innerHTML = newContent;
+      window.scrollTo(0, 0);
+
+      window.history.pushState({ path: targetUrl }, "", targetUrl);
+
+      // Reboot the interactive engine for the new page
+      runPageScripts();
+
+      overlay.classList.remove("fade-in");
+    }, 600);
+  } catch (error) {
+    console.error("SPA Navigation failed. Falling back to hard reload.", error);
+    window.location.href = targetUrl;
   }
 });
 
-document.querySelectorAll("a[data-nav]").forEach((link) => {
-  link.addEventListener("click", (e) => {
-    e.preventDefault();
-    const overlay = document.getElementById("page-transition");
-    if (overlay) overlay.classList.add("fade-in");
-    setTimeout(() => {
-      window.location.href = link.href;
-    }, 600);
-  });
+window.addEventListener("popstate", () => {
+  window.location.reload();
 });
+
 
 // ── PAGE 1: THE VOID ──
 function initVoidPage() {
@@ -252,11 +281,13 @@ function initVoidPage() {
 
   canvas.addEventListener("mousedown", startDrag);
   canvas.addEventListener("mousemove", moveDrag);
-  window.addEventListener("mouseup", endDrag);
+  // Abort controller added to window listeners
+  window.addEventListener("mouseup", endDrag, { signal: pageController.signal });
   canvas.addEventListener("touchstart", startDrag, { passive: false });
   canvas.addEventListener("touchmove", moveDrag, { passive: false });
-  window.addEventListener("touchend", endDrag);
+  window.addEventListener("touchend", endDrag, { signal: pageController.signal });
 }
+
 
 // ── PAGE 2: PLANET DIA ──
 function initPlanetDia() {
@@ -331,6 +362,7 @@ function initPlanetDia() {
   });
 }
 
+
 // ── PAGE 3: GALAKSI KITA ──
 function initGalaksiKita() {
   const mapWindow = document.querySelector(".map-window");
@@ -340,45 +372,56 @@ function initGalaksiKita() {
     startY,
     currentX = -200,
     currentY = -150;
-  canvas.style.transform = `translate(${currentX}px, ${currentY}px)`;
-  mapWindow.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    startX = e.clientX - currentX;
-    startY = e.clientY - currentY;
-  });
+    
+  if(canvas) {
+      canvas.style.transform = `translate(${currentX}px, ${currentY}px)`;
+  }
+  
+  if(mapWindow) {
+      mapWindow.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startX = e.clientX - currentX;
+        startY = e.clientY - currentY;
+      });
+      mapWindow.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - currentX;
+            startY = e.touches[0].clientY - currentY;
+          }
+        },
+        { passive: true },
+      );
+  }
+
+  // Abort controller added to window listeners
   window.addEventListener("mousemove", (e) => {
     if (!isDragging) return;
     currentX = e.clientX - startX;
     currentY = e.clientY - startY;
-    canvas.style.transform = `translate(${currentX}px, ${currentY}px)`;
-  });
+    if(canvas) canvas.style.transform = `translate(${currentX}px, ${currentY}px)`;
+  }, { signal: pageController.signal });
+  
   window.addEventListener("mouseup", () => {
     isDragging = false;
-  });
-  mapWindow.addEventListener(
-    "touchstart",
-    (e) => {
-      if (e.touches.length === 1) {
-        isDragging = true;
-        startX = e.touches[0].clientX - currentX;
-        startY = e.touches[0].clientY - currentY;
-      }
-    },
-    { passive: true },
-  );
+  }, { signal: pageController.signal });
+  
   window.addEventListener(
     "touchmove",
     (e) => {
       if (!isDragging || e.touches.length !== 1) return;
       currentX = e.touches[0].clientX - startX;
       currentY = e.touches[0].clientY - startY;
-      canvas.style.transform = `translate(${currentX}px, ${currentY}px)`;
+      if(canvas) canvas.style.transform = `translate(${currentX}px, ${currentY}px)`;
     },
-    { passive: true },
+    { passive: true, signal: pageController.signal },
   );
+  
   window.addEventListener("touchend", () => {
     isDragging = false;
-  });
+  }, { signal: pageController.signal });
 
   document.querySelectorAll(".cluster").forEach((c) => {
     c.addEventListener("click", () => {
@@ -412,8 +455,8 @@ function initGalaksiKita() {
       }
     };
     holdBtn.addEventListener("pointerdown", start);
-    window.addEventListener("pointerup", end);
-    window.addEventListener("pointercancel", end);
+    window.addEventListener("pointerup", end, { signal: pageController.signal });
+    window.addEventListener("pointercancel", end, { signal: pageController.signal });
   });
 
   const decodeBtn = document.getElementById("decode-btn");
@@ -445,14 +488,15 @@ function initGalaksiKita() {
     document.querySelectorAll(".gyro-item").forEach((item, i) => {
       item.style.transform = `translate3d(${x * (((i % 3) + 1) * 2)}px, ${y * (((i % 3) + 1) * 2)}px, 0)`;
     });
-  });
+  }, { signal: pageController.signal });
 }
+
 
 // ── PAGE 4: TRANSMISI (SURAT) ──
 function initSurat() {
   const bars = document.querySelectorAll(".s-bar");
   let tapCount = 0;
-  document.querySelector(".bars-container").addEventListener("click", () => {
+  document.querySelector(".bars-container")?.addEventListener("click", () => {
     if (tapCount < 3) {
       bars[tapCount].classList.add("active");
       tapCount++;
@@ -488,6 +532,7 @@ function initSurat() {
   });
 }
 
+
 // ── PAGE 5: BINTANG UNTUKMU & EVENT HORIZON ──
 function initBintangUntukmu() {
   // Fog Wipe Logic
@@ -510,7 +555,7 @@ function initBintangUntukmu() {
       ctx.fillText("SWIPE TO CLEAR FOG", canvas.width / 2, canvas.height / 2);
     }
     setTimeout(setCanvasSize, 200);
-    window.addEventListener("resize", setCanvasSize);
+    window.addEventListener("resize", setCanvasSize, { signal: pageController.signal });
 
     let isWiping = false;
     function wipe(e) {
@@ -524,7 +569,7 @@ function initBintangUntukmu() {
       ctx.fill();
     }
     canvas.addEventListener("mousedown", () => (isWiping = true));
-    window.addEventListener("mouseup", () => (isWiping = false));
+    window.addEventListener("mouseup", () => (isWiping = false), { signal: pageController.signal });
     canvas.addEventListener("mousemove", wipe);
     canvas.addEventListener(
       "touchstart",
@@ -543,7 +588,7 @@ function initBintangUntukmu() {
       },
       { passive: false },
     );
-    window.addEventListener("touchend", () => (isWiping = false));
+    window.addEventListener("touchend", () => (isWiping = false), { signal: pageController.signal });
   }
 
   // Wish Sender
@@ -563,42 +608,41 @@ function initBintangUntukmu() {
   // THE EVENT HORIZON ENGINE
   const bh = document.getElementById("blackhole");
   const overlay = document.getElementById("bh-overlay");
-  let eventHorizonTimer;
-  let isConsumed = false;
+  
+  if (bh && overlay) {
+      let eventHorizonTimer;
+      let isConsumed = false;
 
-  bh.addEventListener("contextmenu", (e) => e.preventDefault());
+      bh.addEventListener("contextmenu", (e) => e.preventDefault());
 
-  const startPull = (e) => {
-    if (isConsumed) return;
-    if (e && e.cancelable) e.preventDefault();
+      const startPull = (e) => {
+        if (isConsumed) return;
+        if (e && e.cancelable) e.preventDefault();
 
-    bh.classList.add("is-active");
-    overlay.classList.add("is-pulling");
+        bh.classList.add("is-active");
+        overlay.classList.add("is-pulling");
 
-    // The Event Horizon: If held for 400ms, the interaction forcibly completes
-    eventHorizonTimer = setTimeout(() => {
-      isConsumed = true; // Locks the state permanently
+        eventHorizonTimer = setTimeout(() => {
+          isConsumed = true; 
+          setTimeout(() => {
+            overlay.classList.add("consume");
+            bh.style.display = "none"; 
+          }, 500);
+        }, 400);
+      };
 
-      // Wait for the visual CSS expansion to cover the screen before showing text
-      setTimeout(() => {
-        overlay.classList.add("consume");
-        bh.style.display = "none"; // Clear the physical button
-      }, 500);
-    }, 400);
-  };
+      const stopPull = (e) => {
+        if (isConsumed) return; 
+        if (e && e.cancelable) e.preventDefault();
 
-  const stopPull = (e) => {
-    if (isConsumed) return; // Too late, the gravity took over!
-    if (e && e.cancelable) e.preventDefault();
+        clearTimeout(eventHorizonTimer);
+        bh.classList.remove("is-active");
+        overlay.classList.remove("is-pulling");
+      };
 
-    // If released before 400ms, cancel the horizon timer and shrink back
-    clearTimeout(eventHorizonTimer);
-    bh.classList.remove("is-active");
-    overlay.classList.remove("is-pulling");
-  };
-
-  bh.addEventListener("pointerdown", startPull);
-  window.addEventListener("pointerup", stopPull);
-  window.addEventListener("pointercancel", stopPull);
-  window.addEventListener("pointerout", stopPull); // Added safety for dragging off the button
+      bh.addEventListener("pointerdown", startPull);
+      window.addEventListener("pointerup", stopPull, { signal: pageController.signal });
+      window.addEventListener("pointercancel", stopPull, { signal: pageController.signal });
+      window.addEventListener("pointerout", stopPull, { signal: pageController.signal }); 
+  }
 }
