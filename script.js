@@ -507,7 +507,7 @@ function initSurat() {
   function startTypingLetter() {
     document.getElementById("transmission-letter").classList.add("unlocked");
     const txt =
-      "> SINYAL TERKUNCI.\n\nHai, Dear.\n\nAku gak pernah pinter ngerangkai kata, tapi lewat semesta kecil ini, aku mau jujur.\nSemenjak ada kamu, duniaku yang gelap tiba-tiba punya warnanya sendiri.\n\nSetiap tawamu, setiap ceritamu... semuanya kasih warna di hidupku.\n\nTerima kasih udah ada, udah mau bareng-bareng sama aku sampai sejauh ini. \n\nWords can't even describe how much im grateful for every time we choose each other.\n\nLet's keep making more memories in our little universe! Happy Mensive, Love.";
+      "> SINYAL TERKUNCI.\n\nHai, Bae.\n\nMeeting you was the best thing that ever happened to me. You made my life so much brighter, and i fall in love with you a little bit more every single day.\nI'll always choose you, no matter what happens, without any hesitation.\n\nThankyou bae for understanding me and for loving me so patiently. I hope i bring as much joy to your days as you do to mine.\n\nI just want to spend years and years with you, sharing soft moments, laughing until our stomachs hurt, and building our little dreams together. \n\nWHappy 1st Monthsary bae, i love you more than words can say";
     let i = 0;
     function type() {
       if (i < txt.length) {
